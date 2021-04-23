@@ -4,11 +4,17 @@ import express from 'express'
 import neo4j from 'neo4j-driver'
 import { makeAugmentedSchema } from 'neo4j-graphql-js'
 import dotenv from 'dotenv'
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
+import fetch from 'node-fetch'
+const { gql } = require('@apollo/client')
+
+const bodyParser = require('body-parser')
 
 // set environment variables from .env
 dotenv.config()
 
 const app = express()
+const app1 = express()
 
 /*
  * Create an executable GraphQL schema object from GraphQL type definitions
@@ -67,6 +73,66 @@ const host = process.env.GRAPHQL_SERVER_HOST || '0.0.0.0'
  */
 server.applyMiddleware({ app, path })
 
+var router = express.Router()
+
+// Home page route.
+router.get('/student', function (req, res) {
+  console.log(req.body)
+  res.send('student req')
+})
+const uri = `http://${host}:${port}${path}`
+
 app.listen({ host, port, path }, () => {
   console.log(`GraphQL server ready at http://${host}:${port}${path}`)
+})
+const porty = 5000
+const pathy = ''
+
+app1.use(bodyParser.urlencoded({ extended: true }))
+app1.use(express.json())
+app1.listen(8000, () => {
+  console.log(`GraphQL server ready at http://${host}:${porty}`)
+  console.log(uri)
+})
+// Home page route.
+app1.get('/', function (req, res) {
+  console.log('selam', req.body)
+  res.send('student req')
+})
+// Home page route.
+
+app1.post('/student', function (req, res) {
+  console.log('selam', req.body)
+  let student = JSON.parse(JSON.stringify(req.body))
+  console.log(student)
+
+  dotenv.config()
+
+  const {
+    GRAPHQL_SERVER_HOST: host,
+    GRAPHQL_SERVER_PORT: port,
+    GRAPHQL_SERVER_PATH: path,
+  } = process.env
+
+  console.log(uri)
+  const client = new ApolloClient({
+    link: new HttpLink({ uri, fetch }),
+  })
+
+  let mutObject = gql`
+    mutation AddStudent($Id: ID!, $Name: String, $Age: Int) {
+      CreateStudent(name: $Name, id: $Id, age: $Age) {
+        name
+        age
+        id
+      }
+    }
+  `
+  /**video izlemece mutate koduna bka c#da yapabilirmiyiz ona bak */
+
+  client.mutate({ mutation: mutObject, variables: student }).catch((e) => {
+    console.log(e.networkError.result)
+  })
+
+  res.send('student req')
 })

@@ -1,16 +1,17 @@
-       type Teacher {
-            id: ID!
-            name: String
-            courses: [Course]  @relation(name: "HAS_COURSES", direction: OUT)
-        }
-        type Course {
-            id: ID!
-            name: String
-            students: [Student]  @relation(name: "COURSOR", direction: OUT)
-            teacher: [Teacher]  @relation(name: "HAS_COURSES", direction: IN)
-        }
-        type Student {
-            id: ID!
-            name: String
-            courses: [Course]  @relation(name: "IN_GENRE", direction: OUT)
-        }
+type Teacher {
+  id: ID!
+  name: String
+  courses: [Course] @relation(name: "HAS_COURSES", direction: OUT)
+}
+type Course {
+  id: ID!
+  name: String
+  students: [Student] @relation(name: "COURSOR", direction: OUT)
+  teacher: [Teacher] @relation(name: "HAS_COURSES", direction: IN)
+}
+type Student {
+  id: ID!
+  name: String
+  age: Int
+  courses: [Course] @relation(name: "IN_GENRE", direction: OUT)
+}

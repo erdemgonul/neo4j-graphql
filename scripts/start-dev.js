@@ -11,7 +11,7 @@ const {
 const jobs = [
   {
     name: 'api',
-    command: `cd ${API_DIR} && ${runner} run start:dev`,
+    command: `cd ${API_DIR} && npm run start:dev`,
     prefixColor: 'green',
   },
 ]
@@ -25,7 +25,7 @@ if (templateName === 'Flutter') {
 } else {
   jobs.push({
     name: templateName,
-    command: `cd ${TEMPLATE_DIR} && ${runner} run start`,
+    command: `cd ${TEMPLATE_DIR} && npm run start`,
     prefixColor: 'blue',
   })
 }
